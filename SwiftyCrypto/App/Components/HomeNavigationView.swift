@@ -13,8 +13,11 @@ struct HomeNavigationView: View {
     var body: some View {
         HStack(spacing: .zero) {
             CircularButtonView(iconName: isShowingPortfolio ? "plus" : "info")
+                .background(
+                    CircleButtonAnimationView(animate: $isShowingPortfolio)
+                )
             Spacer()
-            Text(isShowingPortfolio ? "Holding" : "Live")
+            Text(isShowingPortfolio ? "Holdings" : "Live Market")
                 .font(.headline)
                 .fontWeight(.heavy)
                 .foregroundColor(Color.accentColor)
@@ -38,6 +41,7 @@ struct CircularButtonView: View {
 
     var body: some View {
         Image(systemName: iconName)
+            .animation(.none)
             .font(.headline)
             .foregroundColor(Color.accentColor)
             .frame(width: 50, height: 50)
@@ -52,6 +56,18 @@ struct CircularButtonView: View {
     }
 }
 
+struct CircleButtonAnimationView: View {
+    
+    @Binding var animate: Bool
+    
+    var body: some View {
+        Circle()
+            .stroke(lineWidth: 5.0)
+            .scale(animate ? 1.0 : 0.0)
+            .opacity(animate ? 0.0 : 1.0)
+            .animation(animate ? Animation.easeOut(duration: 1.0) : .none, value: animate)
+    }
+}
 
 #Preview {
     Group {

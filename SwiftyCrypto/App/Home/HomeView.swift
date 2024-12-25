@@ -17,8 +17,10 @@ struct HomeView: View {
             SearchBarView(searchText: $viewModel.searchText)
             if !isShowingPortfolio {
                 CoinListView(coins: viewModel.coins)
+                    .transition(.move(edge: .leading))
             } else {
                 portFolioCoinsList
+                    .transition(.move(edge: .trailing))
             }
         }
     }
