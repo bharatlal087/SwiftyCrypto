@@ -14,8 +14,21 @@ struct HomeView: View {
     var body: some View {
         VStack {
             HomeNavigationView(isShowingPortfolio: $isShowingPortfolio)
-            Spacer()
-            CoinListView(coins: viewModel.coins)
+            SearchBarView(searchText: $viewModel.searchText)
+            if !isShowingPortfolio {
+                CoinListView(coins: viewModel.coins)
+            } else {
+                portFolioCoinsList
+            }
         }
+    }
+}
+
+extension HomeView {
+    private var portFolioCoinsList: some View {
+        List {
+            
+        }
+        .listStyle(PlainListStyle())
     }
 }
