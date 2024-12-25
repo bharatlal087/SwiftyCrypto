@@ -10,9 +10,11 @@ import Foundation
 
 final class HomeViewModel: ObservableObject {
     @Published var coins: [Coin] = []
+    @Published var statistics: [Statistic] = []
     @Published var searchText: String = ""
     
     private let service = CoinService()
+    private let marketService = MarketDataService()
     private var cancellable = Set<AnyCancellable>()
     
     init() {
@@ -33,6 +35,25 @@ final class HomeViewModel: ObservableObject {
                 self?.coins = coins
             }
             .store(in: &cancellable)
+    
+        marketService.$marketData
+            .map(mapGlobalData)
+            .sink { [weak self] stats in
+                self?.statistics = stats
+            }
+            .store(in: &cancellable)
+    }
+
+    private func mapGlobalData(data: MarketData?) -> [Statistic] {
+        var stats = [Statistic]()
+        guard let data else { return stats }
+        let marketCap = Statistic(title: "Market Cap", value: data.marketCap, percentageChange: data.marketCapChangePercentage24HUsd)
+        let volume = Statistic(title: "24h Volume", value: data.volume)
+        let btcDominance = Statistic(title: "BTC Dominance", value: data.btcDominance)
+        let portfolioValue = Statistic(title: "Portfolio Value", value: "$0.00", percentageChange: 0)
+        
+        stats.append(contentsOf: [marketCap, volume, btcDominance, portfolioValue])
+        return stats
     }
 
     private func filterCoins(text: String, coins: [Coin]) -> [Coin] {

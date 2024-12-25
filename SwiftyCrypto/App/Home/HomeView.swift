@@ -14,6 +14,7 @@ struct HomeView: View {
     var body: some View {
         VStack {
             HomeNavigationView(isShowingPortfolio: $isShowingPortfolio)
+            HomeStatsView(showPortfolio: $isShowingPortfolio)
             SearchBarView(searchText: $viewModel.searchText)
             if !isShowingPortfolio {
                 CoinListView(coins: viewModel.coins)
