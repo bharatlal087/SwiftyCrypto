@@ -16,17 +16,21 @@ final class HomeViewModel: ObservableObject {
     
     private let service = CoinService()
     private let marketService = MarketDataService()
-    private let portfolioCDService = PortfolioDataServiceCD()
+    private let portfolioService: PortfolioServiceSwiftData
+//    private let portfolioCDService = PortfolioDataServiceCD()
     private var cancellable = Set<AnyCancellable>()
     
+    @MainActor
     init() {
+        self.portfolioService = PortfolioServiceSwiftData.shared
         addSubscribers()
     }
 
     // MARK: - Public
     
     func updatePortfolio(coin: Coin, amount: Double) {
-        portfolioCDService.updatePortfolio(coin: coin, amount: amount)
+//        portfolioCDService.updatePortfolio(coin: coin, amount: amount)
+        portfolioService.updatePortfolio(coin: coin, amount: amount)
     }
     
     // MARK: - Private
@@ -61,10 +65,23 @@ final class HomeViewModel: ObservableObject {
             .store(in: &cancellable)
         
         // Update portfolio - CoreData
-        $coins.combineLatest(portfolioCDService.$savedEntities)
+//        $coins.combineLatest(portfolioCDService.$savedEntities)
+//            .map { coins, entities in
+//                coins.compactMap { (coin) -> Coin? in
+//                    guard let entity = entities.first(where: { $0.coinID == coin.id }) else { return nil }
+//                    return coin.updateHoldings(amount: entity.amount)
+//                }
+//            }
+//            .sink { [weak self] coins in
+//                self?.portfolioCoins = coins
+//            }
+//            .store(in: &cancellable)
+        
+        // Update portfolio - SwiftData
+        $coins.combineLatest(portfolioService.$savedEntities)
             .map { coins, entities in
                 coins.compactMap { (coin) -> Coin? in
-                    guard let entity = entities.first(where: { $0.coinID == coin.id }) else { return nil }
+                    guard let entity = entities.first(where: { $0.coinId == coin.id }) else { return nil }
                     return coin.updateHoldings(amount: entity.amount)
                 }
             }
