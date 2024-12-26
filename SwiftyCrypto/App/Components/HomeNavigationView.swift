@@ -9,10 +9,14 @@ import SwiftUI
 
 struct HomeNavigationView: View {
     @Binding var isShowingPortfolio: Bool
+    var leadingButtonAction: () -> Void
 
     var body: some View {
         HStack(spacing: .zero) {
             CircularButtonView(iconName: isShowingPortfolio ? "plus" : "info")
+                .onTapGesture {
+                    leadingButtonAction()
+                }
                 .background(
                     CircleButtonAnimationView(animate: $isShowingPortfolio)
                 )
@@ -71,10 +75,10 @@ struct CircleButtonAnimationView: View {
 
 #Preview {
     Group {
-        HomeNavigationView(isShowingPortfolio: .constant(false))
+        HomeNavigationView(isShowingPortfolio: .constant(false)){}
             .preferredColorScheme(.dark)
         
-        HomeNavigationView(isShowingPortfolio: .constant(true))
+        HomeNavigationView(isShowingPortfolio: .constant(true)){}
             .preferredColorScheme(.light)
     }
 }
